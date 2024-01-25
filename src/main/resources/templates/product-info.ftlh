@@ -6,6 +6,9 @@
 <body>
 <h1>BUYSELL</h1><hr>
 <h4>Детальна інформація про товар</h4>
+<#list images as img>
+    <img src="/images/${img.id}" height="60px"/><br><br>
+</#list>
 <b>Назва товару: </b>${product.title!}<br>
 <b>Опис товару: </b>${product.description!}<br>
 <b>Ціна: </b>${product.price!}<br>
