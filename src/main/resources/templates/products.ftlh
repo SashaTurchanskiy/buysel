@@ -4,7 +4,11 @@
     <title>BUYSELL</title>
 </head>
 <body>
-<h1>BUYSELL</h1><hr>
+<h1>BUYSELL |  <a href="/login">Увійти</a></h1><hr>
+<form action="/logout" method="post">
+    <input type="hidden" name="csrf" value="${_csrf.token}">
+    <input type="submit" value="Вийти"/>
+</form>
 <h4>Товари зі всієї України</h4>
 <form action="/" method="get">
     Пошук по назві оголошення: <input type="text" name="title"><br>
