@@ -24,6 +24,7 @@ public class User implements UserDetails {
     private String name;
     @Column(name = "email", unique = true)
     private String email;
+    private String activationCode;
     @Column(name = "phoneNumber")
     private String phoneNumber;
     @Column(name = "isActive")

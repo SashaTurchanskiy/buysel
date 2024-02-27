@@ -8,5 +8,8 @@ import org.springframework.stereotype.Service;
 public interface UserService {
 
     public boolean createUser(User user);
+    public void sendMessage(User user);
+
+    public boolean activateUser(String code);
 
 }
