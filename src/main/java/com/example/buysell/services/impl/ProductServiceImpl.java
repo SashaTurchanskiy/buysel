@@ -7,6 +7,7 @@ import com.example.buysell.model.User;
 import com.example.buysell.repos.ProductRepo;
 import com.example.buysell.repos.UserRepo;
 import com.example.buysell.services.ProductService;
+import com.example.buysell.utils.ImageConverter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,8 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepo productRepo;
     private final UserRepo userRepo;
 
+    private final ImageConverter imageConverter;
+
     @Override
     public List<Product> listProduct(String title) {
         if (title != null) return productRepo.findByTitle(title);
@@ -37,16 +40,16 @@ public class ProductServiceImpl implements ProductService {
         Image image2;
         Image image3;
         if (file1.getSize() != 0) {
-            image1 = toImageEntity(file1);
+            image1 = imageConverter.toImageEntity(file1);
             image1.setPreviewImage(true);
             product.addImageToProduct(image1);
         }
         if (file2.getSize() != 0) {
-            image2 = toImageEntity(file2);
+            image2 = imageConverter.toImageEntity(file2);
             product.addImageToProduct(image2);
         }
         if (file3.getSize() != 0) {
-            image3 = toImageEntity(file3);
+            image3 = imageConverter.toImageEntity(file3);
             product.addImageToProduct(image3);
         }
         log.info("Saving new Product. Title: {}; Author email: {}", product.getTitle(), product.getUser().getEmail());
@@ -61,27 +64,32 @@ public class ProductServiceImpl implements ProductService {
         return userRepo.findByEmail(principal.getName());
     }
 
-    private Image toImageEntity(MultipartFile file) throws IOException {
-        Image image = new Image();
-        image.setName(file.getName());
-        image.setOriginalFileName(file.getOriginalFilename());
-        image.setContentType(file.getContentType());
-        image.setSize(file.getSize());
-        image.setBytes(file.getBytes());
-        return image;
+    @Override
+    public List<Product> listProducts(String title) {
+        if (title != null) return productRepo.findByTitle(title);
+        return productRepo.findAll();
     }
+
+
 
     @Override
     public Product getProductById(Long id) {
-        Optional<Product> optionalProduct = productRepo.findById(id);
-        if (optionalProduct.isEmpty()) {
-            throw new ProductDoesNotExistException();
-        }
-        return optionalProduct.get();
+        return productRepo.findById(id).orElse(null);
     }
 
     @Override
-    public void deleteProduct(Long id) {
-        productRepo.deleteById(id);
+    public void deleteProduct(User user, Long id) {
+        Product product = productRepo.findById(id)
+                .orElse(null);
+        if (product != null) {
+            if (product.getUser().getId().equals(user.getId())) {
+                productRepo.delete(product);
+                log.info("Product with id = {} was deleted", id);
+            } else {
+                log.error("User: {} haven't this product with id = {}", user.getEmail(), id);
+            }
+        } else {
+            log.error("Product with id = {} is not found", id);
+        }
     }
 }

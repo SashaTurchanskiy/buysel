@@ -1,21 +1,28 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>BUYSELL</title>
-</head>
-<body>
-<h1>BUYSELL</h1><hr>
-<h4>Реєстрація</h4>
-<form action="/registration" method="post">
-    Ім'я користувача: <input type="text" name="name" ><br><br>
-    Пошта: <input type="email" name="email" value="<#if user??>${user.email}</#if>"
-                  class="form-control ${(emailError??)?string('is-invalid', '')}"
-                  placeholder="some@some.com" /><br><br>
-    Номер телефону: <input type="text" name="phoneNumber"><br><br>
-    Пароль: <input type="password" name="password"><br><br>
-    <input type="hidden" name="_csrf" value="${_csrf.token}">
-    <input type="submit" value="Вхід"/>
-</form>
-
-</body>
-</html>
+<#import "blocks/template.ftlh" as t>
+<@t.template user>
+    <h1 style="text-align: center">Реєстрація</h1>
+    <hr>
+    <form action="/registration" method="post">
+        <div class="form-group">
+            <label for="name">Ім'я користувача</label>
+            <input type="text" class="form-control" required id="name" name="name">
+        </div>
+        <div class="form-group">
+            <label for="email">Електронна пошта</label>
+            <input type="email" class="form-control" id="email" required name="email">
+        </div>
+        <div class="form-group">
+            <label for="phoneNumber">Номер телефону</label>
+            <input type="text" class="form-control" id="phoneNumber" required name="phoneNumber">
+        </div>
+        <div class="form-group">
+            <label for="password">Пароль</label>
+            <input type="password" class="form-control" id="password" required name="password">
+        </div>
+        <input type="hidden" name="_csrf" value="${_csrf.token}">
+        <button type="submit" style="width: 100%" class="btn btn-dark">Зареєструватись</button>
+    </form>
+    <#if errorMessage??>
+        <h2 style="color: red">${errorMessage}</h2>
+    </#if>
+</@t.template>
